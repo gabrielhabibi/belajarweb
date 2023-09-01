@@ -1,0 +1,308 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package miniproject;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import static miniproject.transaksii.nopes;
+
+/**
+ *
+ * @author dell
+ */
+public class ubahpes extends javax.swing.JFrame {
+    koneksi k=new koneksi();
+private void tampilNoPesanan(){
+    String ubah=setergeter.getUbahpes();
+    noPesanan.setText(ubah);
+}
+private void totalubahpesan(){
+    int jumlahBaris=tableubahpsn.getRowCount();
+        int totalHarga=0;
+        int hargaBarang;
+        for(int i=0; i<jumlahBaris; i++) {
+            hargaBarang = Integer.parseInt(tableubahpsn.getValueAt(i, 4).toString());
+            totalHarga = totalHarga + hargaBarang;}
+        TotalHarga.setText(String.valueOf(totalHarga));
+}
+private void tampilTabl(){
+    DefaultTableModel model=new DefaultTableModel();
+        
+        
+        model.addColumn(("No. Pemesanan"));
+        model.addColumn(("Kode Produk"));
+        model.addColumn(("Harga"));
+        model.addColumn(("Jumlah"));
+        model.addColumn("Total Harga");
+        try {
+            int no=1;
+            PreparedStatement pst=k.getCon().prepareStatement("Select no_transaksi,kode_barang,harga,jumlah,total_harga From detail_transaksi where no_transaksi='"
+                    +noPesanan.getText()+"'");
+            ResultSet rst=pst.executeQuery();
+            
+            while (rst.next()) {                
+                model.addRow(new Object[] {rst.getString(1),
+                    rst.getString(2),rst.getString(3),rst.getString(4),rst.getString(5)});
+                
+                tableubahpsn.setModel(model);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+}
+    private void totalitem(){
+        int jumlahBaris=tableubahpsn.getRowCount();
+        int jumlahitem=0;
+        int jumlahBarang;
+        for(int i=0; i<jumlahBaris; i++) {
+            jumlahBarang = Integer.parseInt(tableubahpsn.getValueAt(i, 3).toString());
+            jumlahitem = jumlahitem + jumlahBarang;}
+        TotalItem.setText(String.valueOf(jumlahitem));
+    }
+    public void bayarawal(){
+        try {
+            String sql="Select bayar_awal From transaksi where no_transaksi='"+noPesanan.getText()+"'";
+            Connection kon=k.getCon();
+            PreparedStatement p=kon.prepareStatement(sql);
+            ResultSet rs=p.executeQuery();
+            while (rs.next()) {                
+                setergeter.setAwalbayar(Integer.parseInt(rs.getString("bayar_awal")));
+                int byr=setergeter.getAwalbayar();
+                bayarAWL.setText(String.valueOf(byr));
+            } 
+        } catch (Exception e) {
+        }
+    }
+    private void tampilDIskon(){
+        try {
+            String sql="Select * From diskon";
+            Connection kon=k.getCon();
+            PreparedStatement pst=kon.prepareStatement(sql);
+            ResultSet rs=pst.executeQuery();
+            while (rs.next()) {                
+                combodsk.addItem(rs.getString("kode_diskon"));
+            }
+            rs.last();
+            int jumlahdata=rs.getRow();
+            rs.first();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+    private void hitungDiskon (){
+        try {
+         String sql="Select besar_diskon From diskon where kode_diskon='"+combodsk.getSelectedItem()+"'";
+            Connection kon=k.getCon();
+            PreparedStatement pst=kon.prepareStatement(sql);
+            ResultSet rs=pst.executeQuery();
+            while (rs.next()) {                
+                setergeter.setJumldisk(Integer.parseInt((rs.getString("besar_diskon"))));
+//                kurang.setText(""+setergeter.getJumldisk());
+    int total=Integer.parseInt(TotalHarga.getText());
+    int jmm=setergeter.getJumldisk();
+    int kurangg=total*jmm/100;
+    int totall=total-kurangg;
+    txtKurang.setText(""+totall);
+            }
+            rs.last();
+            int jumlahdata=rs.getRow();
+            rs.first();
+   
+        } catch (Exception e) {
+        }
+    }
+    /**
+     * Creates new form bayarubah
+     */
+    public ubahpes() {
+        initComponents();
+        k.Connect();
+        tampilNoPesanan();
+        tampilTabl();
+        totalitem();
+        totalubahpesan();
+        tampilDIskon();
+        bayarawal();
+        
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        noPesanan = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        TotalItem = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        TotalHarga = new javax.swing.JTextField();
+        txtKurang = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        bayarAWL = new javax.swing.JTextField();
+        combodsk = new javax.swing.JComboBox<>();
+        jLabel7 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tableubahpsn = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().add(noPesanan, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 20, 140, 30));
+
+        jLabel1.setText("Total Item");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 80, 30));
+
+        jLabel2.setText("No. Pemesanan");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 80, 30));
+        getContentPane().add(TotalItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 50, 140, 30));
+
+        jLabel3.setText("Total Harga");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 80, 30));
+        getContentPane().add(TotalHarga, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 80, 140, 30));
+        getContentPane().add(txtKurang, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 140, 140, 30));
+
+        jLabel4.setText("Kurang");
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 70, 30));
+
+        jLabel5.setText("Bayar Awal");
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 70, 30));
+
+        bayarAWL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bayarAWLActionPerformed(evt);
+            }
+        });
+        getContentPane().add(bayarAWL, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 110, 140, 30));
+
+        combodsk.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combodskActionPerformed(evt);
+            }
+        });
+        getContentPane().add(combodsk, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 20, 120, 30));
+
+        jLabel7.setText("Diskon");
+        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 20, 90, 30));
+
+        tableubahpsn.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tableubahpsn);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, -1, -1));
+
+        jButton1.setText("bayar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 70, -1, -1));
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void combodskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combodskActionPerformed
+    txtKurang.setText("");
+    hitungDiskon();
+    }//GEN-LAST:event_combodskActionPerformed
+
+    private void bayarAWLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bayarAWLActionPerformed
+        int bayarawal, totalpmbyrn, kurang;
+        bayarawal = Integer.valueOf(bayarAWL.getText());
+        totalpmbyrn = Integer.valueOf(this.txtKurang.getText());
+        kurang = totalpmbyrn-bayarawal;
+        hitungDiskon();
+        this.txtKurang.setText(String.valueOf(kurang));
+    }//GEN-LAST:event_bayarAWLActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+            String sql="update transaksi set total_item ='"+TotalItem.getText()+"', bayar_awal ='"
+                    +bayarAWL.getText()+"', kurang ='"+txtKurang.getText()+"', total_pembayaran ='"
+                    +TotalHarga.getText()+"', kode_diskon ='"+combodsk.getSelectedItem()
+                    +"' where no_transaksi ='"+noPesanan.getText()+"'";
+            Connection con=k.getCon();
+            PreparedStatement stm=con.prepareStatement(sql);
+            stm.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Pesanan telah diperbarui!!!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(ubahpes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(ubahpes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(ubahpes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ubahpes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ubahpes().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField TotalHarga;
+    private javax.swing.JTextField TotalItem;
+    private javax.swing.JTextField bayarAWL;
+    private javax.swing.JComboBox<String> combodsk;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField noPesanan;
+    private javax.swing.JTable tableubahpsn;
+    private javax.swing.JTextField txtKurang;
+    // End of variables declaration//GEN-END:variables
+}
